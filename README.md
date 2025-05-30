@@ -1,6 +1,6 @@
 # 📀 JukeWiki - Progetto Django
 
-JukeWiki è una piattaforma wiki/social dedicata alla cultura musicale. Gli utenti possono inserire contenuti, commentare, creare forum e salvare i propri brani/articoli preferiti. Il progetto è sviluppato con Django.
+JukeWiki è una piattaforma wiki/social dedicata alla cultura musicale. Gli utenti possono inserire contenuti, commentare, creare forum e salvare i propri brani preferiti. Il progetto è sviluppato con Django.
 
 ---
 
