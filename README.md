@@ -53,21 +53,40 @@ JukeWiki è una piattaforma wiki/social dedicata alla cultura musicale e lettera
 ## 📂 Struttura Principale
 
 ```
-jukewiki/
+JukeWiki/
 ├── manage.py
-├── db.sqlite3
-├── media/
-├── static/
+├── db.sqlite3 (opzionale, se vuoi fornire dump)
+├── media/           # immagini caricate dagli utenti
+├── static/          # contiene style.css, vinyl.css ecc.
+│   │   └── css/
+│   │       ├── style.css
+│   │       └── vinyl.css
+│   │   └── audio/
+│   │   └── avatar/
+│   │   └── js/
+│   │       ├── autocomplete.js
+│   │       └── forum.js
+│   │       ├── player.js
+│   │       └── tracks.js
+│   │       └── vinyl.js
+│   │   └── logo/
+│   │   └── media/  # contiene immagini utilizzate dal sito come le cover delle tracks della playlist e il filtro OLD STYLE
 ├── jukewiki/
 │   ├── settings.py
-│   └── urls.py
+│   ├── urls.py
+│   └── wsgi.py
 ├── core/
 │   ├── models.py
 │   ├── views.py
 │   ├── forms.py
 │   ├── urls.py
 │   ├── admin.py
+│   ├── signals.py
 │   ├── templates/
+│   │   ├── base.html
+│   │   ├── login.html, profilo.html, ecc.
+
+
 ```
 
 ---
