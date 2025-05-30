@@ -55,26 +55,30 @@ JukeWiki è una piattaforma wiki/social dedicata alla cultura musicale e lettera
 ```
 JukeWiki/
 ├── manage.py
-├── db.sqlite3 (opzionale, se vuoi fornire dump)
+├── db.sqlite3 
 ├── media/           # immagini caricate dagli utenti
 ├── static/          # contiene style.css, vinyl.css ecc.
-│   │   └── css/
-│   │       ├── style.css
-│   │       └── vinyl.css
-│   │   └── audio/
-│   │   └── avatar/
-│   │   └── js/
-│   │       ├── autocomplete.js
-│   │       └── forum.js
-│   │       ├── player.js
-│   │       └── tracks.js
-│   │       └── vinyl.js
-│   │   └── logo/
-│   │   └── media/  # contiene immagini utilizzate dal sito come le cover delle tracks della playlist e il filtro OLD STYLE
+│   └── css/
+│   │   ├── style.css
+│   │   └── vinyl.css
+│   └── audio/
+│   └── avatar/
+│   └── js/
+│   │   ├── autocomplete.js
+│   │   └── forum.js
+│   │   ├── player.js
+│   │   └── tracks.js
+│   │   └── vinyl.js
+│   └── logo/
+│   └── media/  # contiene immagini utilizzate dal sito come le cover delle tracks della playlist e il filtro OLD STYLE
 ├── jukewiki/
+│   ├── __pycache__/
+│   ├── __init__
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
+│   └── init.py
+│   └── asgi.py
 ├── core/
 │   ├── models.py
 │   ├── views.py
@@ -85,6 +89,8 @@ JukeWiki/
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── login.html, profilo.html, ecc.
+│   ├── migrations/
+│   ├── __pycache__/ #...
 
 
 ```
