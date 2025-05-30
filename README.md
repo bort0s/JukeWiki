@@ -94,10 +94,3 @@ JukeWiki/
 
 ---
 
-## 🧠 Modello E-R
-
-- **Profilo**: avatar, punti, rank
-- **Contenuto**: brano o articolo
-- **Preferito**: salvataggi utente-contenuto
-- **Forum**: discussione collegata a brano
-- **CommentoForum**: commenti e risposte nidificate
