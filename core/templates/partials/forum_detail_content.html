@@ -1,0 +1,109 @@
+{% load static %}
+
+<h1 style="font-size: 2rem;"> {{ forum.titolo }}</h1>
+
+{% if forum.creatore == request.user %}
+  <form id="delete-forum-form" method="post" action="{% url 'elimina_forum' forum.id %}">
+    {% csrf_token %}
+    <button type="submit" class="form-button light" style="margin-bottom: 1rem;">🗑 Elimina questo forum</button>
+  </form>
+{% endif %}
+
+<h3 style="color: #aaa;">🎵 {{ forum.brano }}</h3>
+<p style="margin-top: 1rem;">{{ forum.descrizione }}</p>
+<hr>
+
+<!-- COMMENTI -->
+<div style="margin-top: 2rem;">
+  {% for commento in commenti %}
+    <div class="comment-box">
+      <div class="comment-header">
+        <img src="{% static 'avatar/' %}{{ commento.autore.profilo.avatar }}" class="comment-avatar">
+        <div>
+          <p><strong>{{ commento.autore.username }}</strong> - {{ commento.data_pubblicazione|date:"d/m/Y H:i" }}</p>
+          <p>
+            {% if commento.risposta_a %}
+              <span class="reply-tag">@{{ commento.risposta_a.autore.username }}</span>
+            {% endif %}
+            {{ commento.testo }}
+          </p>
+        </div>
+      </div>
+
+      <div class="comment-actions">
+        {% if request.user.is_authenticated %}
+          <button class="rispondi-button btn-small" data-id="{{ commento.id }}" data-author="{{ commento.autore.username }}">↪ Rispondi</button>
+        {% endif %}
+        {% if commento.autore == request.user %}
+          <form class="form-elimina-commento" method="post" action="{% url 'elimina_commento' commento.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-small danger">🗑 Elimina</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  {% empty %}
+    <p>Nessun commento ancora.</p>
+  {% endfor %}
+</div>
+
+<!-- FORM COMMENTO -->
+{% if request.user.is_authenticated %}
+  <form method="post" class="forum-comment-form" data-forum-id="{{ forum.id }}" style="margin-top: 2rem;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="risposta_a" id="risposta-a-input" value="">
+    <button type="submit" class="form-button light">Invia Commento</button>
+  </form>
+{% else %}
+  <p style="margin-top: 2rem; color: #aaa;">🔒 Effettua il <a href="{% url 'login' %}" style="color: #4dabf7;">login</a> per commentare.</p>
+{% endif %}
+
+<style>
+  .comment-box {
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #222;
+  }
+
+  .comment-header {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #555;
+  }
+
+  .reply-tag {
+    color: #4dabf7;
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+
+  .comment-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-small.danger {
+    background-color: #330000;
+    color: white;
+  }
+</style>

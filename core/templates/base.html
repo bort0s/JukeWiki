@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}JukeWiki{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/vinyl.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'logo/favicon.ico' %}" />
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  <!-- 🎞️ FILTRO RÉTRO VIDEO -->
+  <video autoplay muted loop id="filmOverlay">
+    <source src="{% static 'media/filter.mp4' %}" type="video/mp4">
+  </video>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="piano-wrapper">
+      <ul class="piano-vertical white-fixed">
+        <li class="white"><a href="{% url 'home' %}">Home</a></li>
+        <li class="white"><a href="{% url 'browse' %}">Browse</a></li>
+        <li class="white"><a href="{% url 'profilo' %}">Profilo</a></li>
+        <li class="white"><a href="{% url 'nuovo' %}">Nuovo Contenuto</a></li>
+        <li class="white"><a href="{% url 'forums' %}">Forums</a></li>
+        {% if user.is_authenticated %}
+          <li class="white"><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li class="white"><a href="{% url 'login' %}">Login</a></li>
+        {% endif %}
+      </ul>
+
+      <div class="piano-black-container">
+        <div class="black pos-1"></div>
+        <div class="black pos-2"></div>
+        <div class="black pos-3"></div>
+        <div class="black pos-4"></div>
+        <div class="black pos-5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hamburger -->
+  <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </button>
+
+  <!-- Header -->
+  <header class="navbar">
+    <a href="{% url 'home' %}" class="logo-link">
+      <img src="{% static 'logo/logo.png' %}" alt="JukeWiki Logo" class="logo-image">
+    </a>
+
+    <!-- 🎞️ Filtro rétro toggle -->
+    <div class="retro-toggle">
+      <label>
+        filter
+        <input type="checkbox" id="toggle-retro">
+      </label>
+    </div>
+  </header>
+
+  <!-- Contenuto dinamico -->
+  {% block content %}{% endblock %}
+
+  <!-- PLAYER UNIVERSALE -->
+  <div id="player-bar">
+    <div class="player-header">
+      <span id="track-title-text">Track 1</span>
+    </div>
+
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+
+    <div class="player-controls">
+      <button id="prev">&#9664;&#9664;</button>
+      <button id="play">&#9654;</button>
+      <button id="next">&#9654;&#9654;</button>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.4">
+    </div>
+  </div>
+
+  <!-- Audio -->
+  <audio id="jukebox" preload="auto"></audio>
+
+  <!-- Script -->
+  <script src="{% static 'js/tracks.js' %}"></script>
+  <script src="{% static 'js/player.js' %}"></script>
+  <script src="{% static 'js/vinyl.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+
+  <!-- JS Toggle Retro Filter + LocalStorage -->
+  <script>
+    const toggleCheckbox = document.getElementById('toggle-retro');
+    const filmOverlay = document.getElementById('filmOverlay');
+
+    const retroSetting = localStorage.getItem('retroFilter');
+    if (retroSetting === 'off') {
+      toggleCheckbox.checked = false;
+      filmOverlay.style.display = 'none';
+    } else {
+      toggleCheckbox.checked = true;
+      filmOverlay.style.display = 'block';
+    }
+
+    toggleCheckbox.addEventListener('change', () => {
+      if (toggleCheckbox.checked) {
+        filmOverlay.style.display = 'block';
+        localStorage.setItem('retroFilter', 'on');
+      } else {
+        filmOverlay.style.display = 'none';
+        localStorage.setItem('retroFilter', 'off');
+      }
+    });
+  </script>
+</body>
+</html>

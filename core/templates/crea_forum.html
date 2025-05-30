@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crea Nuovo Forum - JukeWiki{% endblock %}
+
+{% block content %}
+<div class="form-container" style="margin-top: 8rem;">
+  <a href="javascript:history.back()" style="float: right; text-decoration: none; font-size: 1.5rem; color: #fff;">✖</a>
+  <h1 class="form-title">📝 Crea un nuovo forum</h1>
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+      {{ form.titolo.label_tag }}
+      {{ form.titolo }}
+    </div>
+
+    <div class="form-group">
+      {{ form.brano.label_tag }}
+      {{ form.brano }}
+    </div>
+
+    <div class="form-group">
+      {{ form.descrizione.label_tag }}
+      {{ form.descrizione }}
+    </div>
+
+    <button type="submit" class="form-button light">Crea Forum</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/autocomplete.js' %}"></script>
+{% endblock %}

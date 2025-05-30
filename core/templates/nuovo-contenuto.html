@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Nuovo Contenuto{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <a href="javascript:history.back()" style="float: right; text-decoration: none; font-size: 1.5rem; color: #fff;">✖</a>
+  <h1 class="form-title">Inserisci Nuovo Brano</h1>
+
+  <!-- BLOCCO ERRORI -->
+  {% if form.errors %}
+    <div class="form-alert">
+      <h4>❌ Si sono verificati degli errori nel modulo:</h4>
+      <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <!-- FORM -->
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <p>{{ form.titolo.label_tag }}{{ form.titolo }}</p>
+    <p>{{ form.artista.label_tag }}{{ form.artista }}</p>
+    <p>{{ form.album.label_tag }}{{ form.album }}</p>
+    <p>{{ form.anno.label_tag }}{{ form.anno }}</p>
+    <p>{{ form.genere.label_tag }}{{ form.genere }}</p>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="instrumental-toggle">
+        Brano strumentale
+      </label>
+    </div>
+
+    <p>{{ form.testo.label_tag }}{{ form.testo }}</p>
+    <p>{{ form.link.label_tag }}{{ form.link }}</p>
+    <p>{{ form.immagine.label_tag }}{{ form.immagine }}</p>
+
+    <button type="submit" class="form-button light">Salva</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const checkbox = document.getElementById('instrumental-toggle');
+    const testoField = document.querySelector('textarea[name="testo"]');
+    const testoWrapper = testoField.closest('p');
+
+    function toggleTestoField() {
+      if (checkbox.checked) {
+        testoWrapper.style.display = 'none';
+        testoField.value = '[ Instrumental ]';
+      } else {
+        testoWrapper.style.display = '';
+        if (testoField.value === '[ Instrumental ]') {
+          testoField.value = '';
+        }
+      }
+    }
+
+    if (checkbox && testoField) {
+      checkbox.addEventListener('change', toggleTestoField);
+      toggleTestoField(); // esegui inizialmente
+    }
+  });
+</script>
+{% endblock %}

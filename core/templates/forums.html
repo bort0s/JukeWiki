@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Forum - JukeWiki{% endblock %}
+
+{% block content %}
+<div style="margin-top: 7rem; display: flex; padding: 1rem; gap: 2rem;">
+
+  <!-- Sinistra: Ricerca e lista forum -->
+  <div style="width: 30%;">
+    <form method="get">
+      <input type="text" id="forum-search" name="search" placeholder="Cerca per brano..." class="form-input"
+             value="{{ query|default:'' }}" style="margin-bottom: 1rem;">
+    </form>
+    <div id="forum-list">
+      {% for forum in forums %}
+        <div class="contenuto-card forum-link" data-id="{{ forum.id }}">
+          <strong>{{ forum.titolo }}</strong><br>
+          <small>{{ forum.brano }}</small>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Destra: contenuto forum -->
+  <div id="forum-detail" style="flex-grow: 1; height: 78vh; overflow-y: auto; background-color: #1a1a1a; border-radius: 10px; padding: 1.5rem; padding-bottom: 6rem;">
+    <p>Seleziona un forum dalla lista a sinistra.</p>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/forums.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ contenuto.titolo }} - JukeWiki{% endblock %}
+{% block content %}
+<div class="form-container" style="
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1100px;
+  margin: 10rem auto 4rem auto;
+  position: relative;
+">
+
+  <!-- VINILE -->
+  {% if contenuto.immagine %}
+  <div style="flex: 0 0 300px; display: flex; justify-content: flex-start; align-items: center; margin: auto 0; margin-left: 2rem;">
+    <div class="carousel-vinyl center">
+      <div class="vinyl-inner">
+        <div class="vinyl-disc">
+          <div class="vinyl-rings"></div>
+          <img src="{{ contenuto.immagine.url }}" alt="Copertina" class="vinyl-cover">
+          <div class="vinyl-hole"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- DETTAGLI A DESTRA -->
+  <div style="flex: 1 1 400px; display: flex; flex-direction: column; justify-content: center;">
+
+    {% if user.is_authenticated %}
+      <!-- PULSANTI (solo se loggato) -->
+      <div class="note-button-group">
+        <!-- Cerca Forum -->
+        <a href="{% url 'forums' %}?search={{ contenuto.titolo|urlencode }}">
+          <button class="note-btn" title="Cerca Forum">Cerca Forum</button>
+        </a>
+
+        <!-- Crea Forum -->
+        <a href="{% url 'crea_forum' %}?brano={{ contenuto.titolo|urlencode }}">
+          <button class="note-btn" title="Crea Forum">Crea Forum</button>
+        </a>
+
+        <!-- Preferito -->
+        <form method="post" action="{% if preferito %}{% url 'rimuovi_preferito' contenuto.id %}{% else %}{% url 'aggiungi_preferito' contenuto.id %}{% endif %}">
+          {% csrf_token %}
+          <button type="submit" class="heart-btn {% if preferito %}heart-pink{% else %}heart-gray{% endif %}" title="Preferiti">
+            ♥
+          </button>
+        </form>
+      </div>
+    {% endif %}
+
+
+
+
+
+
+
+    <!-- TITOLO -->
+    <h1 class="form-title" style="display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 1.6rem;">🎵</span> {{ contenuto.titolo }}
+    </h1>
+
+    <!-- DETTAGLI -->
+    <p><strong>🎤 Artista:</strong> {{ contenuto.artista }}</p>
+    {% if contenuto.album %}
+      <p><strong>💿 Album:</strong> {{ contenuto.album }}</p>
+    {% endif %}
+    {% if contenuto.anno %}
+      <p><strong>📅 Anno:</strong> {{ contenuto.anno }}</p>
+    {% endif %}
+    {% if contenuto.genere %}
+      <p><strong>🎼 Genere:</strong> {{ contenuto.genere }}</p>
+    {% endif %}
+    {% if contenuto.link %}
+      <p><strong>🔗 Link:</strong> <a href="{{ contenuto.link }}" target="_blank">{{ contenuto.link }}</a></p>
+    {% endif %}
+
+    {% if contenuto.testo == "[ Instrumental ]" %}
+      <hr>
+      <p><em>🎶 Questo è un brano strumentale.</em></p>
+    {% else %}
+      <hr>
+      <p><strong>📖 Testo / Descrizione:</strong></p>
+      <p>{{ contenuto.testo }}</p>
+    {% endif %}
+
+    <!-- TORNA INDIETRO -->
+    <div style="margin-top: 2rem; text-align: left;">
+      <a href="{% url 'browse' %}" class="nav-button">← Torna Indietro</a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="cover-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center;">
+  <img id="modal-img" src="{{ contenuto.immagine.url }}" alt="Copertina" style="max-height:90vh; max-width:90vw; border-radius:10px;">
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const vinyl = document.querySelector(".vinyl-inner");
+    const modal = document.getElementById("cover-modal");
+
+    if (vinyl && modal) {
+      vinyl.addEventListener("click", () => modal.style.display = "flex");
+      modal.addEventListener("click", () => modal.style.display = "none");
+    }
+  });
+</script>
+{% endblock %}
+

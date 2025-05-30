@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registrazione - JukeWiki{% endblock %}
+
+{% block content %}
+<main class="form-container">
+  <h1 class="form-title">🆕 Registrazione</h1>
+
+  {% if form.errors %}
+    <div class="form-alert">
+      <h4>❌ Ci sono degli errori nel modulo:</h4>
+      <ul>
+        {% for field, errors in form.errors.items %}
+          {% for error in errors %}
+            <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="{{ form.username.id_for_label }}">Username</label>
+      {{ form.username }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.email.id_for_label }}">Email</label>
+      {{ form.email }}
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.password1.id_for_label }}">Password</label>
+      <div class="password-wrapper">
+        {{ form.password1 }}
+        <span class="toggle-password" onclick="togglePassword('id_password1', this)">👁</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.password2.id_for_label }}">Conferma Password</label>
+      <div class="password-wrapper">
+        {{ form.password2 }}
+        <span class="toggle-password" onclick="togglePassword('id_password2', this)">👁</span>
+      </div>
+    </div>
+
+    <div class="form-group center">
+      <button type="submit" class="form-button light">Registrati</button>
+    </div>
+  </form>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function togglePassword(id, el) {
+    const input = document.getElementById(id);
+    if (input && input.type === "password") {
+      input.type = "text";
+      el.classList.add("active");
+    } else if (input) {
+      input.type = "password";
+      el.classList.remove("active");
+    }
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}{{ forum.titolo }}{% endblock %}
+{% block content %}
+
+<div class="form-container" style="max-width: 1000px; margin-top: 8rem;">
+  <h1 style="font-size: 2rem;">🧵 {{ forum.titolo }}</h1>
+  <h3 style="color: #aaa;">🎵 {{ forum.brano }}</h3>
+  <p style="margin-top: 1rem;">{{ forum.descrizione }}</p>
+
+  <hr>
+
+  <!-- Commenti scrollabili -->
+  <div style="max-height: 300px; overflow-y: auto; margin-top: 2rem; background: #222; padding: 1rem; border-radius: 10px;">
+    {% for commento in commenti %}
+      <div style="margin-bottom: 1rem;">
+        <p><strong>{{ commento.autore.username }}</strong> - {{ commento.data_pubblicazione|date:"d/m/Y H:i" }}</p>
+        <p>{{ commento.testo }}</p>
+      </div>
+    {% empty %}
+      <p>Nessun commento ancora.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Form commento -->
+  <form method="post" style="margin-top: 2rem;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="form-button light">Invia Commento</button>
+  </form>
+</div>
+
+{% endblock %}

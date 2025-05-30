@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profilo - JukeWiki{% endblock %}
+
+{% block content %}
+<main class="form-container profilo-wrapper">
+  <a href="javascript:history.back()" class="nav-button" style="position: absolute; top: 8rem; left: 2rem;">← Torna indietro</a>
+  <h1 class="profilo-titolo">👤 Benvenuto, {{ user.username }}</h1>
+
+  <!-- Avatar principale + rank -->
+  <div class="profilo-avatar">
+    <img src="{% static 'avatar/' %}{{ profilo.avatar }}" alt="Avatar" class="avatar-preview">
+    <div class="rank-display">🎖️ Grado: <strong>{{ rank }}</strong></div>
+  </div>
+
+  <!-- Bottone per mostrare scelta avatar -->
+  <div class="center">
+    <button type="button" class="form-button light" id="toggle-avatar-select">Cambia avatar</button>
+  </div>
+
+  <!-- Form selezione avatar -->
+  <form method="post" id="avatar-form" style="display: none;">
+    {% csrf_token %}
+    <div class="avatar-grid">
+      {% for filename in avatar_files %}
+        <label>
+          <input type="radio" name="avatar" value="{{ filename }}" class="avatar-radio"
+                 {% if profilo.avatar == filename %}checked{% endif %}>
+          <img src="{% static 'avatar/' %}{{ filename }}"
+               class="avatar-choice {% if profilo.avatar == filename %}selected{% endif %}">
+        </label>
+      {% endfor %}
+    </div>
+    <div class="center">
+      <button type="submit" class="form-button light">Aggiorna avatar</button>
+    </div>
+  </form>
+
+  <!-- Divider -->
+  <hr class="profilo-separatore">
+  <h2 class="profilo-sottotitolo">🎵 I tuoi brani inseriti</h2>
+
+  {% if contenuti %}
+    <ul class="lista-contenuti">
+      {% for contenuto in contenuti %}
+        <li class="contenuto-card">
+          {% if contenuto.immagine %}
+            <img src="{{ contenuto.immagine.url }}" alt="Cover brano"
+                 style="max-width: 100px; border-radius: 8px; margin-bottom: 0.5rem;">
+          {% endif %}
+
+          <h3>
+            <a href="{% url 'contenuto_esteso' contenuto.id %}" class="contenuto-link">
+              🎧 {{ contenuto.titolo }}
+            </a>
+          </h3>
+
+          {% if contenuto.testo == "[ Instrumental ]" %}
+            <p><em>🎶 Brano strumentale</em></p>
+          {% endif %}
+
+          <a href="{{ contenuto.link }}" target="_blank" class="contenuto-link">🔗 Ascolta</a><br>
+
+          <form method="post"
+                action="{% url 'elimina_contenuto' contenuto.id %}"
+                data-id="{{ contenuto.id }}"
+                class="elimina-form"
+                style="margin-top: 0.5rem;">
+            {% csrf_token %}
+            <button type="submit" class="form-button light" style="background: #330000; color: white;">
+              🗑️ Elimina
+            </button>
+          </form>
+
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="profilo-empty">Non hai ancora inserito nessun contenuto.</p>
+  {% endif %}
+
+  <hr class="profilo-separatore">
+  <h2 class="profilo-sottotitolo">⭐ I tuoi preferiti</h2>
+
+  {% if preferiti %}
+    <ul class="lista-contenuti">
+      {% for fav in preferiti %}
+        <li class="contenuto-card">
+          {% if fav.contenuto.immagine %}
+            <img src="{{ fav.contenuto.immagine.url }}" alt="Cover"
+                style="max-width: 100px; border-radius: 8px; margin-bottom: 0.5rem;">
+          {% endif %}
+
+          <h3>
+            <a href="{% url 'contenuto_esteso' fav.contenuto.id %}" class="contenuto-link">
+              🎧 {{ fav.contenuto.titolo }}
+            </a>
+          </h3>
+          <p><em>Aggiunto il {{ fav.aggiunto_il|date:"d/m/Y H:i" }}</em></p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="profilo-empty">Nessun contenuto nei preferiti.</p>
+  {% endif %}
+</main>
+
+<!-- Popup conferma eliminazione -->
+<div id="popup-elimina" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9999;">
+  <div style="background:#222; padding:2rem; border-radius:10px; text-align:center;">
+    <p style="margin-bottom:1rem;">⚠️ Eliminare il brano?</p>
+    <button id="popup-conferma" class="form-button light" style="margin-right:1rem;">Conferma</button>
+    <button id="popup-annulla" class="form-button light">Annulla</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const popup = document.getElementById("popup-elimina");
+    const confermaBtn = document.getElementById("popup-conferma");
+    const annullaBtn = document.getElementById("popup-annulla");
+    let currentForm = null;
+
+    // Mostra popup
+    document.querySelectorAll(".elimina-form").forEach(form => {
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        currentForm = form;
+        popup.style.display = "flex";
+      });
+    });
+
+    // Conferma: invia AJAX e rimuove elemento
+    confermaBtn.addEventListener("click", () => {
+      if (!currentForm) return;
+      const contenutoId = currentForm.dataset.id;
+
+      fetch(`/contenuto/${contenutoId}/elimina/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+      })
+      .then(res => {
+        if (res.ok) {
+          currentForm.closest("li").remove();
+        } else {
+          alert("Errore nell'eliminazione");
+        }
+        popup.style.display = "none";
+        currentForm = null;
+      });
+    });
+
+    // Annulla
+    annullaBtn.addEventListener("click", () => {
+      popup.style.display = "none";
+      currentForm = null;
+    });
+
+    // Avatar toggle
+    const toggle = document.getElementById("toggle-avatar-select");
+    const form = document.getElementById("avatar-form");
+    if (toggle && form) {
+      toggle.addEventListener("click", () => {
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      });
+    }
+
+    document.querySelectorAll('.avatar-choice').forEach(img => {
+      img.addEventListener('click', () => {
+        document.querySelectorAll('.avatar-choice').forEach(i => i.classList.remove('selected'));
+        img.classList.add('selected');
+        img.previousElementSibling.checked = true;
+      });
+    });
+  });
+</script>
+{% endblock %}
+

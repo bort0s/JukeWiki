@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse - JukeWiki{% endblock %}
+
+{% block content %}
+  <div class="form-container" style="max-width: 1100px; margin-top: 7rem;">
+
+    <!-- BOTTONE TOGGLE FILTRI -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <button class="form-button light" onclick="toggleSearch()">🔍 Filtra</button>
+    </div>
+
+    <!-- FORM RICERCA (NASCOSTA INIZIALMENTE) -->
+    <form id="search-form" method="get" style="display: none; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
+        <input type="text" name="autore" placeholder="Autore" class="form-input" value="{{ request.GET.autore }}">
+        <input type="text" name="anno" placeholder="Anno" class="form-input" value="{{ request.GET.anno }}">
+        <input type="text" name="genere" placeholder="Genere" class="form-input" value="{{ request.GET.genere }}">
+        <input type="text" name="testo" placeholder="Contiene testo..." class="form-input" value="{{ request.GET.testo }}">
+        <button type="submit" class="form-button light">Cerca</button>
+    </form>
+
+    <!-- RISULTATI A CARD -->
+    <div class="vinyl-grid">
+      {% for contenuto in contenuti %}
+        <a href="{% url 'contenuto_esteso' contenuto.id %}" class="vinyl-card-rect">
+          <div class="carousel-vinyl center">
+            <div class="vinyl-inner">
+              <div class="vinyl-disc">
+                <div class="vinyl-rings"></div>
+                <img src="{{ contenuto.immagine.url }}" alt="Cover" class="vinyl-cover">
+                <div class="vinyl-hole"></div>
+              </div>
+            </div>
+          </div>
+          <p class="vinyl-card-title">{{ contenuto.titolo }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function toggleSearch() {
+    const form = document.getElementById("search-form");
+    form.style.display = form.style.display === "none" ? "flex" : "none";
+  }
+</script>
+{% endblock %}
