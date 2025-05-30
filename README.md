@@ -68,7 +68,6 @@ jukewiki/
 │   ├── urls.py
 │   ├── admin.py
 │   ├── templates/
-│   └── static/
 ```
 
 ---
