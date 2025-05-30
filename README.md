@@ -33,17 +33,14 @@ JukeWiki è una piattaforma wiki/social dedicata alla cultura musicale e lettera
 ## 🧪 Setup del Progetto
 
 1. **Clona il progetto** o scaricalo come ZIP.
-2. Crea ambiente virtuale:
+2. Installa python e le librerie necessarie con i seguenti comandi:
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/macOS
-   venv\Scripts\activate   # Windows
+   pip install django
    ```
-3. Installa i pacchetti:
    ```bash
-   pip install -r requirements.txt
+   pip install pillow
    ```
-4. Avvia il server:
+3. Spostati nella cartella del progetto ed avvia il server:
    ```bash
    python manage.py runserver
    ```
